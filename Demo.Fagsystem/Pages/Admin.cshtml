@@ -1,0 +1,34 @@
+﻿@page
+@using Demo.Fagsystem.Pages
+@model AdminModel
+@{
+    <h1>Admin-side</h1>
+    <hr />
+    @if(Model.Error != "")
+    {
+        <p style="color:red">@Model.Error</p>
+        <hr />
+    }
+    @if (!Model.allDeleted)
+    {
+        <div>
+            <button name="deleteAll">Slett alle meldinger</button><br />
+        </div>
+    }
+    <hr />
+    <div>
+        <h2>Oppdater definisjoner</h2>
+        <button name="renewDefs">Bruk oppdaterte definisjoner</button>
+    </div>
+    <hr />
+    <div>
+        <h2>Last opp definisjonsfiler:</h2>
+        <input type="file" id="postedFiles" name="postedFiles" value="Velg definisjonsfil (.zip eller enkeltfiler)" multiple>
+
+        <button name="filesUpload" id="filesUpload" type="submit" asp-page-handler="UploadFiles">Last opp</button>
+    </div>
+    <hr />
+    <p>@Html.Raw(Model.Result)</p>
+}
+
+

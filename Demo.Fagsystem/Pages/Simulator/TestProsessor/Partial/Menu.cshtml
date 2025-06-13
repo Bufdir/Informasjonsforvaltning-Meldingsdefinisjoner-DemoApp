@@ -1,0 +1,26 @@
+﻿@using Demo.Fagsystem.Pages.Partial
+@using Demo.Fagsystem.Pages.Simulator.Partial
+@model FagsystemToolbarModel
+@{
+     var scenarioModel = new ScenarioSelectorModel(this.Context.Request);
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <button class="nav-link text-dark" onclick="postForm('/Organisasjon')">Organisasjon</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-dark" onclick="postForm ('/MeldingListe')">Liste</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-dark" onclick="postForm ('/Simulator/TestProsessor')">Kjør tester</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-dark" onclick="openInNewTab('/TestSchema')">XSD oversikt</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+}

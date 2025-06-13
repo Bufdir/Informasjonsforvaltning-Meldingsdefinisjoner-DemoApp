@@ -1,0 +1,16 @@
+﻿@page
+@using Demo.Fagsystem.Pages.Simulator.TestProsessor
+@model TestProsessorModel
+@{
+    <h1>Test av meldingsformidler</h1>
+    <div>
+        <input type="checkbox" name="checkAll" id="checkAll" checked /><label for="checkAll">Kjør alle tester</label>
+    @foreach (var test in Model.Tester)
+    {
+        <div>
+                <input type="checkbox" name="@test.Id" id="@test.Id" checked /><label for="@test.Id">(@test.Id) @test.Tittel</label>
+        </div>
+    }
+    <button>Kjør tester</button>
+    </div>
+}

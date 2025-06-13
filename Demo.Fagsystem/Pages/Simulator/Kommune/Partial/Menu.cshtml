@@ -1,0 +1,37 @@
+﻿@using Demo.Fagsystem
+@using Demo.Fagsystem.Models
+@using Demo.Fagsystem.Models.Utils
+@using Demo.Fagsystem.Pages.Partial
+@using Demo.Fagsystem.Pages.Simulator.Partial
+@model FagsystemToolbarModel
+@{
+    bool isSelected = WebUtils.GetRequestValue(this.Context.Request, Konstanter.SelectedSak) != "";
+    string selectedKlientCss = (isSelected) ? "" : "disabled_button";
+    string disabledString = (isSelected) ? "" : "disabled";
+    string jsSelectedKlientFunc = (isSelected) ? "postForm" : "dummyPost";
+    var scenarioModel = new ScenarioSelectorModel(this.Context.Request);
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            @await Html.PartialAsync("/Pages/Partial/SakSelector.cshtml", new SakSelectorModel(this.Context.Request))
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <button class="nav-link text-dark" onclick="postForm('/Organisasjon')">Fagsystem/Organisasjon</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-dark @selectedKlientCss" onclick="@jsSelectedKlientFunc ('/MeldingListe')">Liste</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-dark @selectedKlientCss" onclick="postForm('/Melding')" @disabledString>Ny melding</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-dark" onclick="postForm ('/Simulator/TestProsessor')">Kjør tester</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-dark" onclick="openInNewTab('/TestSchema')">XSD oversikt</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+}

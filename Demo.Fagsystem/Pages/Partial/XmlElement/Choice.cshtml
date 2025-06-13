@@ -1,0 +1,85 @@
+﻿@using System.Xml.Schema
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Xml
+@using Demo.Fagsystem.Models.Demodata
+@using Demo.Fagsystem.Models.Utils
+@using Demo.Fagsystem.Models.ViewModels
+@model PropertyRendererModel
+@{
+    var rawElements = XsdUtils.GetChoiceElements(Model.Prop)
+                ?? throw new Exception("choiceElements is null");
+    if (rawElements.Any(ce => !(ce is XmlSchemaElement)))
+    {
+        throw new Exception("choiceElements inneholder element hvor (is XmlSchemaElement == false)");
+    }
+    var choiceElements = rawElements.Cast<XmlSchemaElement>();
+    string selectedValue = "";
+    PrefilledValue? prefilled = null;
+    foreach (var elem in choiceElements)
+    {
+        if (elem == null)
+            throw new Exception($"'elem' == null'");
+        var possiblePrefilled = Model.Melding.GetPrefilledValueFor($"{Model.GetId()}{elem.Name}");
+        if (possiblePrefilled != null && possiblePrefilled.Value != "") // if chosen
+        {
+            selectedValue = elem.Name ?? "?";
+            prefilled = possiblePrefilled;
+        }
+
+    }
+    var selectedElement = (selectedValue != "") ? choiceElements.FirstOrDefault(ch => ch.Name == selectedValue) : null;
+    string value = (prefilled?.Value) ?? "";
+    bool disable = (prefilled?.OpenToEdit == false);
+    string disableCssClass = (disable) ? "disabled_button" : "";
+    string disableStr = (disable) ? "disabled" : "";
+    int selectedIndex = -1;
+    int index = 0;
+    <div>
+        <span class="ledetekst @disableCssClass">@Model.GetCaption(true)</span>
+        @await Html.PartialAsync($"/Pages/Partial/XmlElement/Beskrivelse.cshtml", @Model.GetDescription())
+        @{
+            Model.CheckAddEnabler();
+            bool first = true;
+            string chosenValue = "";
+            <div>
+                @foreach (var choiceElement in choiceElements)
+                {
+                    if (choiceElement == null)
+                        throw new Exception($"'choiceElement' == null'");
+                    string id = $"{Model.GetId()}_CHOICE_{choiceElement.Name}";
+                    bool isChecked = (selectedValue != "") ? choiceElement.Name == selectedValue : first;
+                    if (isChecked)
+                    {
+                        selectedIndex = index;
+
+                        chosenValue = choiceElement.Name ?? "??";
+                    }
+                    string checkedAttr = (isChecked) ? "checked" : "";
+                    first = false;
+
+                    <input type="radio" class="dropdown" title="@Model.GetId()" name="@Model.GetNameChoice()_CHOICE" id="@id" value="@choiceElement.Name" onchange="chooseChoiceElement('@id','choice_container')" @checkedAttr @disableStr />
+                    <label class="checkbox_tekst @disableCssClass" title="@Model.GetId()" for="@id">@TeksterUtils.GetCaption(Model.Melding.SelectedSchema, choiceElement, true)@Html.Raw(WebUtils.getMandatoryMarker(Model, !isChecked))</label>
+                index++;
+            }
+                @if (disable)
+                {
+                    <input type="hidden" name="@Model.GetNameChoice()_CHOICE" value="@chosenValue" />
+                }
+
+                @{
+                    index = 0;
+                    foreach (var choiceElement in choiceElements)
+                    {
+                        var elementModel = new PropertyRendererModel(Model, Model.Melding, $"{Model.GetId()}", choiceElement) {UseCaption = false};
+                        string controlName = RenderUtils.GetControlNameForProperty(choiceElement, true);
+                        string displayClass = (index == selectedIndex) ? "" : "hidden";
+                        index++;
+                        <div class="choice_container @displayClass">
+                            @await Html.PartialAsync($"/Pages/Partial/XmlElement/{controlName}.cshtml", elementModel)
+                        </div>
+                    }
+            }
+            </div>
+        }
+    </div>
+}

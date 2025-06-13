@@ -1,0 +1,97 @@
+﻿@using System.Xml.Schema
+@using Buf.Meldingsutveksler.SkjemaVerktoy.EnumKodeliste
+@using Buf.Meldingsutveksler.SkjemaVerktoy.EnumKodeliste.Models
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster.Models
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Xml
+@using Demo.Fagsystem.Models.Utils
+@using Demo.Fagsystem.Models.ViewModels
+@model PropertyRendererModel
+@{
+    var caption = Model.GetCaption(false);
+    var elements = TeksterUtils.GetEnrichedChildren(Model.Melding.SelectedSchema, Model.Prop);
+    var description = Model.GetDescription();
+    bool synligGruppe = !string.IsNullOrEmpty(caption);
+    string cssClass = (synligGruppe) ? "synlig_gruppe" : "anonym_gruppe";
+    var enumType = XsdUtils.GetIterateTypeDefinition(Model.Prop)
+        ?? throw new Exception($"Could not find type {Model.Prop.ToString()}");
+    string enumTypeName = XsdUtils.GetName(enumType) ?? "";
+    var enumElement = elements.FirstOrDefault(el => XsdUtils.GetSimpleType(el.Element) == enumType)?.Element ?? Model.Prop;
+
+    Model.CheckAddEnabler();
+
+    if (Model.InnerModel != null)
+    {
+        EnrichedElement insertedEl = new(Model.InnerModel.Prop);
+        elements.Insert(Model.InnerModelIndex ?? elements.Count, insertedEl);
+    }
+    Kodeliste kodeliste = KodelisteUtils.GetKodeliste(enumType)
+        ?? throw new Exception($"Kodeliste for enumType '{enumType.Name}' ikke funnet"); ;
+    var koder = (Model.KodelisteFilterVariabel != "") ? KodelisteUtils.GetFilteredKodeliste(kodeliste, Model.KodelisteFilterVariabel, Model.KodelisteFilterVerdi) : kodeliste.koder!.ToList();
+    var isOptional = XsdUtils.GetIsOptional(Model.Prop);
+    var cssClassVariable = isOptional ? "hidden" : "";
+    var clickActionTemplate = isOptional ? "setHiddenByCheckbox('[id1]', '[id2]')" : "";
+    var prefilledItems = Model.GetPrefilledItems(Model.GetId());
+    if (Model.CustomCaptionPattern == "")
+    {
+        <div class="gruppetekst @Model.CustomCaptionStyle">@Model.GetCaption(true)@Html.Raw(WebUtils.getMandatoryMarker(Model))</div>
+    }
+    @foreach (var kode in koder)
+    {
+        string id = Model.GetIdWithItemNo(kode.verdi!.Replace(".", "-"));
+        string separator = id.EndsWith('.') ? "" : ".";
+        string enumElementName = $"{id}{separator}{XsdUtils.GetName(enumElement)}";
+        string idVariabelDiv = id + "__container";
+        string onChangeHandler = (clickActionTemplate.Replace("[id1]", id).Replace("[id2]", idVariabelDiv) + ";checkDependentControlsActivation(this)").TrimStart(';');
+        <div>
+            @if (isOptional || XsdUtils.IsSimpleType(Model.Prop))
+            {
+                var prefilledValue = prefilledItems.Where(l => l.Where(p => p.Value == kode.verdi).Count() > 0);
+                string checkedValue = (prefilledValue.Count() > 0) ? "checked" : ""; 
+                <input type="checkbox" value="@kode.verdi" id="@id" name="@id" onchange="@onChangeHandler" @checkedValue>
+                <label class="checkbox_tekst" for="@id">@kode.tekst</label>
+            }
+            else
+            {
+                string thiscaption = (Model.CustomCaptionPattern != "") ? string.Format(Model.CustomCaptionPattern, kode.tekst) : kode.tekst ?? "";
+                <span class="gruppetekst @Model.CustomCaptionStyle">@thiscaption</span>
+                @if (!string.IsNullOrEmpty(kode.beskrivelse))
+                {
+                    @await Html.PartialAsync($"/Pages/Partial/XmlElement/Beskrivelse.cshtml", kode.beskrivelse)
+                }
+            }
+            <input type="hidden" value="@kode.verdi" name="@enumElementName" id="@enumElementName">
+
+            <div id="@idVariabelDiv" class="option_container @cssClassVariable">
+                @foreach (var enrichedElement in elements)
+                {
+                    XmlSchemaAnnotated element = enrichedElement.Element;
+                    if (string.IsNullOrEmpty(element.Id))
+                        throw new Exception($"Element med navn={XsdUtils.GetName(element)} har ingen id...");
+                    @if (XsdUtils.GetSimpleType(element) != enumType)
+                    {
+                        <div class="variabel">
+                            @{
+                                var registerRec = XmlSchemaRegister.Schemas.xsds.First(r => r.nmsp == Model.Melding.SelectedSchema?.TargetNamespace);
+                                string path = (Model.InnerModel != null && Model.InnerModel.Prop == element) ? Model.InnerModel.ParentXPath : id;
+                                var elementModel = new PropertyRendererModel(Model, Model.Melding, $"{path}", element, enumType);
+                                elementModel.KodelisteFilterVariabel = Model.KodelisteFilterVariabel;
+                                elementModel.KodelisteFilterVerdi = kode.verdi;
+                                string veiledningTekst = TeksterUtils.GetKodelisteBeskrivelseFromVeiledning(registerRec, kodeliste.id!, kode.verdi);
+                                elementModel.CustomText = veiledningTekst;
+                                elementModel.FilterText = (veiledningTekst != "") ? veiledningTekst : (kode.tekst ?? kode.verdi);
+                                if (element == Model.InnerModel?.Prop)
+                                {
+                                    elementModel.CustomCaptionPattern = Model.InnerModel.CustomCaptionPattern;
+                                }
+                                string controlName = RenderUtils.GetControlNameForProperty(element);
+                            }
+                            @await Html.PartialAsync($"/Pages/Partial/XmlElement/{controlName}.cshtml", elementModel)
+                        </div>
+                    }
+                }
+                </div>
+            </div>
+    }
+
+}

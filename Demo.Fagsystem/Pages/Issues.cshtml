@@ -1,0 +1,39 @@
+﻿@page
+@using Demo.Fagsystem.Pages
+@model IssuesModel
+@{
+    <h1>Om demo-applikasjonen</h1>
+    <p>
+        <ul>
+            <li>Viser hvordan XML-skjemaet (XSD) definert for en melding kan fremstå for bruker</li>
+            <li>Demonsterer sending og mottak av meldinger</li>
+            <li>Simulerer fagsystem i ulike organisasjoner</li>
+        </ul>
+    </p>
+    <p>
+        Visningen av skjema i demoapplikasjonen vil ikke gjenspeile <i>konkret</i> hvordan saksbehandlere i 1.-linje barnevern vil se skjemaene, det styres av leverandører av fagsystemer som brukes.
+        Formålet med denne demoapplikasjonen er å teste ut definisjonene, det logiske/informasjonsmessige innholdet og å skape et bilde av den praktiske bruken av definisjonene.
+    </p>
+    <p>
+        For innspill, kontakt gjerne <a href="mailto:bjorge.saether@bufdir.no">Bjørge Sæther</a>
+    </p>
+    <h1>Mangler</h1>
+    <ul>
+        <li style="text-decoration:line-through">Sjekk av obligatoriske verdier før lagring</li>
+        <li>Visning av hvilke obligatoriske verdier som ikke er satt</li>
+        <li>Forvirrende størrelser på overskrifter</li>
+        <li style="text-decoration:line-through">Redigering av allerede lagrede meldinger</li>
+        <li>Håndtering av ulike versjoner av melding (spesielt meldingshodet)</li>
+    </ul>
+
+    <h1>Feil</h1>
+    <ul>
+        <li style="text-decoration:line-through">Feiler ved forsøk på lagring</li>
+    </ul>
+
+    <h1>Videreutvikling</h1>
+    <ul>
+        <li>Simulere melsingsutveksling mellom 1.- og 2.-linje barnevern <i><b>Under arbeid</b></i></li>
+    </ul>
+
+}

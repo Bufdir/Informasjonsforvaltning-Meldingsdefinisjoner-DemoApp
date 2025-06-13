@@ -1,0 +1,11 @@
+@using Demo.Fagsystem.Pages.Partial
+@model MessageOverlayModel
+@{
+    <div class="melding_overlay" onclick="closeOnClick(this)">
+        <div class="melding_overlay_boks">
+             <img class="melding_overlay_ikon" src="~/img/ok.png" >
+             <h3>@Model.Caption</h3>
+                @Model.Message
+        </div>
+    </div>
+}

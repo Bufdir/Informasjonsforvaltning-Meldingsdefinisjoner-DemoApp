@@ -1,0 +1,21 @@
+﻿@using Demo.Fagsystem.Models.Business
+@using Demo.Fagsystem.Pages
+@model IndexModel
+@{
+   @if(Model.SelectedKlient != null)
+    {
+        <h2>Barn</h2>
+        <div class="variabel"><span class="ledetekst">Navn</span><span class="tekst_verdi">@Model.SelectedKlient!.FREG_Person!.Fornavn @Model.SelectedKlient.FREG_Person.Etternavn</span></div>
+        <div class="variabel"><span class="ledetekst">Fødselsnr.</span><span class="tekst_verdi">@Model.SelectedKlient.FREG_Person.Fodselsnummer</span></div>
+        <div class="variabel"><span class="ledetekst">Kjønn</span><span class="tekst_verdi">@Model.SelectedKlient.FREG_Person.Kjonn</span></div>
+        <div class="variabel"><span class="ledetekst">Nettverk</span></div>
+            @foreach (NettverkPerson person in (Model.SelectedKlient as Barn)!.Nettverk!)
+                {
+                    <div class="variabel">
+                        <span class="ledetekst"></span><span class="tekst_verdi">@person.fREG_Person!.Fornavn @person.fREG_Person.Etternavn</span>
+                          (<span class="tekst_verdi">@person.NettverkRelasjon</span>)
+                    </div>
+                }
+
+    }
+}

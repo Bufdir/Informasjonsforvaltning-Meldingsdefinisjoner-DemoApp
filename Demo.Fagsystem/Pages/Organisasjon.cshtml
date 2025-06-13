@@ -1,0 +1,26 @@
+﻿@page
+@using Demo.Fagsystem.Pages
+@model OrganisasjonModel
+@{
+    <h2>Representert organisasjon</h2>
+    @if (Model.Instans != null)
+    {
+        <div class="variabel"><span class="ledetekst">Navn</span><span class="tekst_verdi">@Model.Instans!.Organisasjon.Navn</span></div>
+        <div class="variabel"><span class="ledetekst">Org.nr.</span><span class="tekst_verdi">@Model.Instans.Organisasjon.Organisasjonsnummer</span></div>
+        @if (Model.Instans.Organisasjon.Kommuneinfo != null)
+        {
+            <div class="variabel"><span class="ledetekst">Kommune</span><span class="tekst_verdi">@Model.Instans.Organisasjon.Kommuneinfo.Kommunenummer @Model.Instans.Organisasjon.Kommuneinfo.Kommunenavn</span></div>
+            @if(Model.Instans.Organisasjon.Kommuneinfo?.Bydelsinfo != null)
+            {
+                <div class="variabel"><span class="ledetekst">Bydel</span><span class="tekst_verdi">@Model.Instans.Organisasjon.Kommuneinfo?.Bydelsinfo?.Bydelsnummer @Model.Instans.Organisasjon.Kommuneinfo?.Bydelsinfo?.Bydelsnavn </span></div>
+            }
+        }
+        <h2>Fagsystem</h2>
+        <div class="variabel"><span class="ledetekst">Navn</span><span class="tekst_verdi">@Model.Instans!.FagsystemInfo.Navn (v. @Model.Instans!.FagsystemInfo.Versjon)</span></div>
+        <div class="variabel"><span class="ledetekst">Produsent</span><span class="tekst_verdi">@Model.Instans.FagsystemInfo.Leverandor</span></div>
+    }
+    else
+    {
+        <div class="variabel">(Ikke valgt)</div>
+    }
+}

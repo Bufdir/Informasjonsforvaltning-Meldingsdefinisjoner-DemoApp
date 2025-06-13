@@ -1,0 +1,40 @@
+﻿@using Demo.Fagsystem.Models
+@using Demo.Fagsystem.Models.Utils
+@using Demo.Fagsystem.Models.ViewModels
+@model PropertyRendererModel
+@{
+
+    var minLength = Model.GetMinLength();
+    var maxLength = Model.GetMaxLength();
+    bool flerlinje = maxLength > 255;
+    string cssClassCaption = (flerlinje) ? "ledetekst_flerlinje" : "ledetekst";
+    var prefilled = Model.Melding.GetPrefilledValueFor(Model.GetId());
+    string value = (prefilled?.Value) ?? "";
+    bool disable = (prefilled?.OpenToEdit == false);
+    bool addMarkerAnyway = false;
+    if (!disable)
+    {
+        addMarkerAnyway = Model.CheckAddEnabler();
+    }
+    string visibleIdAndName = @Model.GetId() + ((disable) ? "_disabled" : ""); // gi disablet input et navn som gjør at de ikke hentes ut
+    string disableCssClass = (disable) ? "disabled_button" : "";
+    string disableStr = (disable) ? "disabled" : "";
+    if (Model.UseCaption)
+    {
+        <div class="@cssClassCaption @disableCssClass @Model.CustomCaptionStyle">@Model.GetCaption(true)@Html.Raw(WebUtils.getMandatoryMarker(Model, false, addMarkerAnyway))@Html.Raw(WebUtils.getMinLengthMarker(Model))</div>
+    }
+    if (disable)
+    {
+        <input type="hidden" name="@Model.GetId()" id="@Model.GetId()" value="@value" />
+    }
+    if (flerlinje)
+    {
+        @await Html.PartialAsync($"/Pages/Partial/XmlElement/Beskrivelse.cshtml", @Model.GetDescription())
+        <textarea title="@Model.GetId()" class="flerlinjetekst @disableCssClass" name="@visibleIdAndName" id="@visibleIdAndName" @disableStr >@value</textarea>
+    }
+    else
+    {
+        <input title="@Model.GetId()" type="text" class="enlinjetekst @disableCssClass" name="@visibleIdAndName" id="@visibleIdAndName" value="@value" @disableStr />
+        @await Html.PartialAsync($"/Pages/Partial/XmlElement/Beskrivelse.cshtml", @Model.GetDescription())
+    }
+}

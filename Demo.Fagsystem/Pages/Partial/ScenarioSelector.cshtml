@@ -1,0 +1,39 @@
+﻿@using Demo.Fagsystem
+@using Demo.Fagsystem.Models.FagsystemSimulator.Fagsystem
+@using Demo.Fagsystem.Pages.Partial
+@model ScenarioSelectorModel
+@{
+
+
+
+    string lastFagsystem = "";
+
+    string fagsystem = (Model.selectedInstans != null) ? $"{Model.selectedInstans.FagsystemInfo.Navn} - {Model.selectedInstans.Organisasjon.Kortnavn}" : "DemoApp";
+    <input type="hidden" name="@Konstanter.SelectedFagsystem" value="@fagsystem" />
+    <span class="org_selector_tittel">Fagsystem/Aktør:&nbsp;
+        <select name="@Konstanter.InstansId" onchange="postForm('/Index')">
+            <option value="">- velg -</option>
+            @foreach (FagsystemBase fsi in Model.OrganisasjonListe!)
+            {
+                if (fsi.Config.Aktiv == "1")
+                {
+                    if (fsi.FagsystemInfo.Navn != lastFagsystem)
+                    {
+                        lastFagsystem = fsi.FagsystemInfo.Navn;
+                        <optgroup label="@fsi.FagsystemInfo.Navn (@fsi.FagsystemInfo.Versjon)"></optgroup>
+                    }
+                    string caption = $"{fsi.Organisasjon.Kortnavn} / {fsi.Bruker.KontaktInfo!.Kontaktperson!.Navn}";
+                    if (Model.selectedInstans == fsi)
+                    {
+                        <option value="@fsi.Id" selected>@caption</option>
+                    }
+                    else
+                    {
+                        <option value="@fsi.Id">@caption</option>
+                    }
+                }
+            }
+
+    </select>
+    </span>
+}

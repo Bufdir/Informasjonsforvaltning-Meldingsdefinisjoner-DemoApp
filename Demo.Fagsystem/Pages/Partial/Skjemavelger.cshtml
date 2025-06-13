@@ -1,0 +1,85 @@
+﻿@using System.Xml
+@using System.Xml.Schema
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Meldingsprotokoll
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Xml
+@using Demo.Fagsystem
+@using Demo.Fagsystem.Models
+@using Demo.Fagsystem.Pages
+
+@model MeldingModel
+@{
+    string selectedSchema = Model.SelectedSchema?.TargetNamespace ?? "";
+    bool disable = Model.SelectedSkjemaDisabled == true;
+    string disableCssClass = (disable) ? "disabled_button" : "";
+    string disableStr = (disable) ? "disabled" : "";
+    bool sakSelected = Model.SelectedKlient != null;
+    string disabledSprak = (Model.AvailableSprak.Count == 1) ? "disabled" : "";
+    if (disable)
+    {
+        <input type="hidden" name="@Konstanter.SelectedSkjema" value="@selectedSchema">
+    }
+        <div>
+        <span class="ledetekst_kort">Skjema:</span>
+        <select name="@Konstanter.SelectedSkjema" onchange="this.form.submit()" class="@disableCssClass" @disableStr>
+            <option value="">- velg skjema / melding -</option>
+            @foreach (XmlSchema schema in XsdUtils.XsdSchemas)
+            {
+                var rotElement = XsdUtils.GetRootElement(schema);
+                if (rotElement != null)
+                {
+                    bool isKlientTypeMelding = MeldingsprotokollUtils.IsKlientMeldingType(schema);
+                    if (MeldingsprotokollUtils.GetCanSend(rotElement, Model.Fagsystem!.Organisasjon.Aktortype))
+                    {
+                        bool unsuitableKlientType = sakSelected ^ isKlientTypeMelding;
+                        bool disabledOption = unsuitableKlientType || !MeldingsprotokollUtils.GetUsedInAksjon(rotElement, Model.SelectedAksjon);
+                        bool selected = false;
+                        if (selectedSchema == schema.TargetNamespace?.ToString())
+                        {
+                                selected = true;
+                        }
+                        string teksterCaption = TeksterUtils.GetCaption(schema, rotElement, false, Model.SelectedSprak);
+                        if (teksterCaption == "")
+                            teksterCaption = TeksterUtils.GetCaption(schema, rotElement, true, Model.SelectedSprak);// + "(id: " + rotElement.Id + ")";
+                        string? caption = $"{teksterCaption} [{schema.Version}]";
+                        string title = schema.TargetNamespace ?? "<melding>";
+                        if (disabledOption)
+                        {
+                            <option value="@schema.TargetNamespace" title="@title" disabled>@caption</option>
+                        }
+                        else
+                        {
+                            if (selected)
+                            {
+                                <option value="@schema.TargetNamespace" title="@title" selected>@caption</option>
+                            }
+                            else
+                            {
+                                <option value="@schema.TargetNamespace" title="@title" >@caption</option>
+                            }
+                        }
+                    }
+                }
+            }
+            </select>
+        <span class="ledetekst_kort">Språk</span>
+        <select name="@Konstanter.SelectedSprak" onchange="this.form.submit()" @disabledSprak>
+                <option value="">- velg språk/språkform -</option>
+                @{
+                    foreach(var sprak in Model.AvailableSprak)
+                    {
+                        var selected = sprak == Model.SelectedSprak;
+                        if (selected)
+                        {
+                            <option value="@sprak" selected >@sprak</option>
+                        }
+                        else
+                        {
+                            <option value="@sprak">@sprak</option>
+                        }
+                    }
+                }
+        </select>
+            <hr />
+        </div>
+}

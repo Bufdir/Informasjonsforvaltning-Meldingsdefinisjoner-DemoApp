@@ -1,0 +1,26 @@
+﻿@using Demo.Fagsystem
+@using Demo.Fagsystem.Models.Business
+@using Demo.Fagsystem.Pages.Partial
+@model SakSelectorModel
+@{
+
+    string cssClassDisabled = Model.OrgSelected ? "" : "disabled";
+    string disabledStr = Model.OrgSelected ? "" : "disabled";
+
+    <span class="barn_selector_tittel @cssClassDisabled">Sak: </span>
+    <select class="sak_selector" name="@Konstanter.SelectedSak" onchange="postForm('/Index')" @disabledStr>
+        <option value=""></option>
+        @foreach (Klient barn in Model.KlientListe!)
+        {
+            if (Model.selectedKlient == barn)
+            {
+                <option value="@barn.Id" selected>@barn.FREG_Person!.Fornavn @barn.FREG_Person.Etternavn (@barn.FREG_Person.Fodselsnummer)</option>
+            }
+            else
+            {
+                <option value="@barn.Id">@barn.FREG_Person!.Fornavn @barn.FREG_Person.Etternavn (@barn.FREG_Person.Fodselsnummer)</option>
+            }
+        }
+
+    </select>
+}

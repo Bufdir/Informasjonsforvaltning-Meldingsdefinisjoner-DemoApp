@@ -1,0 +1,60 @@
+﻿@using Demo.Fagsystem
+@using Demo.Fagsystem.Models
+@using Demo.Fagsystem.Models.FagsystemSimulator.Fagsystem
+@using Demo.Fagsystem.Models.Utils
+@using Demo.Fagsystem.Pages.Partial
+@using Demo.Fagsystem.Pages.Simulator.Partial
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@WebUtils.GetRequestValue(this.Context.Request, Konstanter.SelectedFagsystem)</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data">
+        <header>
+            @{
+                bool isSelectedFagsystem = WebUtils.GetRequestValue(this.Context.Request, Konstanter.InstansId) != "";
+                string selectedFagsystemCss = (isSelectedFagsystem) ? "" : "disabled_button";
+                string jsSelectedFagsystemFunc = (isSelectedFagsystem) ? "postForm" : "dummyPost";
+                var scenarioModel = new ScenarioSelectorModel(this.Context.Request);
+                bool doClear = WebUtils.GetRequestValue(this.Context.Request, Konstanter.ActionParam) == "clear";
+            }
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container">
+                    <a class="navbar-brand" asp-area="" asp-page="/Index" title="Hjem">Bufdir MELDING demo</a>
+                    @await Html.PartialAsync("/Pages/Partial/ScenarioSelector.cshtml", scenarioModel)
+                    <a class="nav-link text-dark" asp-area="" asp-page="/XSDs">  XSD / tillegg</a>
+                    <a class="nav-link text-dark" asp-area="" asp-page="/Index" target="_blank">  Nytt vindu</a>
+                    <button class="nav-link text-dark" asp-area="" onclick="@jsSelectedFagsystemFunc ('/Admin')">  Admin</button>
+                </div>
+            </nav>
+            @if (scenarioModel.selectedInstans != null)
+            {
+                string fagsystemMenu = scenarioModel.selectedInstans.PageFolder; 
+                @await Html.PartialAsync($"/Pages/Simulator/{fagsystemMenu}/Partial/Menu.cshtml", new FagsystemToolbarModel(this.Context.Request, scenarioModel.selectedInstans))
+                ;
+            }
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    </form>
+</body>
+</html>

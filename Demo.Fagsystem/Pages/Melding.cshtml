@@ -1,0 +1,46 @@
+﻿@page
+@using System.Xml
+@using System.Xml.Schema
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Xml
+@using Demo.Fagsystem
+@using Demo.Fagsystem.Models.ViewModels
+@using Demo.Fagsystem.Pages.Partial
+@model Demo.Fagsystem.Pages.MeldingModel
+@{
+    @await Html.PartialAsync("/Pages/Partial/Skjemavelger.cshtml", Model)
+
+    @if (Model.SelectedSchema != null)
+    {
+        bool disableSend = Model.Fagsystem?.Config.Standalone == "1";
+        string disableSendStr = (disableSend) ? "disabled" : "";
+        string disableSendToolTip = (disableSend) ? "Applikasjonen er i standalone-modus og kan ikke sende" : "";
+        var fileName = Model.SelectedSchema.TargetNamespace;
+        var rootElement = XsdUtils.GetRootElement(Model.SelectedSchema)
+          ?? throw new Exception($"Skjema {Model.SelectedSchema.TargetNamespace} mangler rotelement");
+        @await Html.PartialAsync("/Pages/Partial/XmlElement/Gruppe.cshtml", new PropertyRendererModel(null, Model, "", rootElement))
+        <input type="button" name="Send" onclick="postForm('LagreMelding', 'sendt')" value="Send" title="@disableSendToolTip" @disableSendStr />
+        <input type="button" name="Lagre" onclick="postForm('LagreMelding', 'lagret')" value="Lagre" />
+        <input type="button" name="Avbryt" onclick="postForm('MeldingListe')" value="Avbryt" />
+        <input type="hidden" name="@Konstanter.ActionParam" id="@Konstanter.ActionParam" value="">
+        <input type="hidden" name="XSD_FIL" id="XSD_FIL" value="@fileName">
+        <input type="hidden" name="@Konstanter.XmlId" id="@Konstanter.XmlId" value="@Model.ExistingId">
+        <input type="hidden" name="Redigert">
+        @if(Model.Message != "")
+        {
+            @await Html.PartialAsync("/Pages/Partial/MessageOverlay.cshtml", new MessageOverlayModel("Endret Target Namespace for melding", Model.Message));
+        }
+    }
+}
+
+@section Scripts
+{
+    @foreach (ControlEnabler enabler in Model.controlEnablers)
+    {
+        <script>
+            registerDependentControl('@enabler.EnabledControlId', '@enabler.ControlId', '@enabler.ControlValue', @enabler.IsInverted.ToString().ToLower());
+        </script>
+    }
+    <script>
+        setDependentControlsDefault();
+    </script>
+}

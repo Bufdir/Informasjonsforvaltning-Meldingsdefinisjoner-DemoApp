@@ -1,0 +1,49 @@
+﻿@page
+@using System.Xml
+@using System.Xml.Schema
+@using Buf.Meldingsutveksler.Meldinger.Models
+@using Demo.Fagsystem
+@using Demo.Fagsystem.Pages
+@using Demo.Fagsystem.Pages.Partial
+@model MeldingListeModel
+@{
+//    string processButtonCssClass = (Model.NumPendingTasks > 0) ? "" : "disabled_button";
+    <input type="hidden" name="@Konstanter.XmlId" id="@Konstanter.XmlId" value="">
+    <input type="hidden" name="@Konstanter.Handling" id="@Konstanter.Handling" value="">
+    <input type="hidden" name="@Konstanter.ActionParam" id="@Konstanter.ActionParam" value="">
+
+    <table id="meldingListe" class="melding_liste">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Dato / tid</th>
+                <th>Id</th>
+                <th>Status</th>
+                <th>Handling</th>
+            </tr>
+        </thead>
+        @foreach(var melding in Model.Meldinger)
+        {
+
+            MeldingMenyModel menyModel = new(melding!);
+
+            string sendtTid = (melding.Meldingshode.SendtTidspunkt != null) ? melding.Meldingshode.SendtTidspunkt/*((DateTime)(melding.Meldingshode.SendtTidspunkt)).ToString("yyyy-MM-dd HH:mm:ss")*/ : "";
+            <tr>
+                <td>@melding.Meldingshode.Meldingstype<input type="hidden" value="@melding.Meldingshode.Id" name="@melding.Meldingshode.Id" /></td>
+                <td>@sendtTid</td>
+                <td>@melding.Meldingshode.Id</td>
+                <td>@MeldingUtils.GetEnumText(melding.State)</td>
+                <td>@await Html.PartialAsync("Partial/MeldingMeny.cshtml", menyModel)</td>
+            </tr>
+        }
+    </table>
+    @if (Model.ErrorText != "")
+    {
+        @await Html.PartialAsync("/Pages/Partial/MessageOverlay.cshtml", new MessageOverlayModel("Feil ved prosessering", Model.ErrorText))
+        ;
+    }
+
+    <div style="margin-top:20px">
+        <button name="refresh" type="submit">Oppfrisk</button>
+    </div>
+}

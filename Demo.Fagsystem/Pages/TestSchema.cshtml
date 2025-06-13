@@ -1,0 +1,131 @@
+﻿@page
+@using Buf.Meldingsutveksler.SkjemaVerktoy.EnumKodeliste
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Xml
+@using Demo.Fagsystem.Models.Utils
+@using Demo.Fagsystem.Pages
+@model TestSchemaModel
+@{
+    Layout = null;
+    string cellstyle = "border:1px solid #CCCCCC;padding-left:5px;padding-right:5px";
+    <div style="font-family:arial;">
+    <h2>Skjematyper:</h2>
+    @foreach (var type in Model.schemaRootElementTypes/*.OrderBy(sch => sch.Value.Count)*/)
+    {
+        <h3>@type.Key</h3>
+        <table style="font-size:0.8em;border-collapse:collapse">
+            <thead>
+                <tr>
+                    <td style="font-weight:bold;@cellstyle">Element</td>
+                    <td style="font-weight:bold;@cellstyle">Type</td>
+                    @foreach (var schemaRec in type.Value)
+                    {
+                        var caption = TeksterUtils.GetCaption(schemaRec.Schema, XsdUtils.GetRootElement(schemaRec.Schema), true);
+                        <td style="font-weight:bold;@cellstyle">@caption</td>
+                    }
+                </tr>
+            </thead>
+            @{
+                bool isOdd = true;
+                foreach (var elementType in Model.elementTyper[type.Key])
+                {
+                    if (elementType.Xpath.Length - type.Key.Length > 1 && !elementType.Xpath.Contains("/Meldingshode/"))
+                    {
+                        string xPath = elementType.Xpath.Remove(0, type.Key.Length + 2);
+                        string bgColor = (isOdd) ? "#EEEEEE" : "white";
+                        isOdd = !isOdd;
+                        bool anyIsChoice = false;
+                        bool allAreChoices = true;
+                        string datatype = "";
+                        @foreach (var instance in elementType.elementInstances)
+                        {
+                            if (instance != null)
+                            {
+                                if (instance.IsChoiceElement)
+                                {
+                                    anyIsChoice = true;
+                                } else
+                                {
+                                    allAreChoices = false;
+                                }
+                                string thisDataType = XsdUtils.GetDataTypeText(instance.element, true);
+                                if (datatype == "")
+                                {
+                                    datatype = thisDataType;
+                                }
+                                else if (!datatype.Contains(thisDataType))
+                                {
+                                    datatype += ";" + thisDataType;
+                                }
+                            }
+                        }
+                        if (anyIsChoice && !allAreChoices)
+                        {
+                            throw new Exception($" Element {xPath}: anyIsChoice && !allAreChoices");
+                        }
+                        string elementCategory = (anyIsChoice) ? "<choice>" : "";
+                            <tr style="@cellstyle">
+                            <td style="@cellstyle;background-color:@bgColor">@xPath</td>
+
+                            <td style="@cellstyle;background-color:@bgColor">@datatype @elementCategory</td>
+                            @{
+                                var textArray = new string[elementType.elementInstances.Length];
+                                int index = 0;
+
+                                foreach (var instance in elementType.elementInstances)
+                                {
+                                    string includedText = "";
+                                    if (instance != null)
+                                    {
+                                        if (datatype.Contains("enum"))
+                                        {
+                                            if (xPath.EndsWith("/Sprak"))
+                                            {
+                                                includedText = "(ca. 190 Språkkoder ISO 639-1)";
+                                            }
+                                            else
+                                            {
+                                                var kodelistetekster = KodelisteUtils.GetKodelisteRestricted(instance.element);
+                                                if (kodelistetekster == null)
+                                                {
+                                                    includedText = "X - finner ikke koder";
+                                                }
+                                                else
+                                                {
+                                                    foreach (var kode in kodelistetekster.koder)
+                                                    {
+                                                        string color = (kode.Included) ? "black" : "#D0D0D0";
+                                                        includedText += $"<span style='color:{color};display:block'>{kode.tekst}</span>";
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            includedText = "X";
+                                        }
+                                    }
+                                    textArray[index] = includedText;
+                                    index++;
+
+                                }
+                                if (RenderUtils.AllElementsEqual(textArray))
+                                {
+                                    <td colspan="@textArray.Length" style="background-color:@bgColor;text-align:center;@cellstyle">@Html.Raw(textArray[0])</td>
+                                }
+                                else
+                                {
+                                    foreach (var textElement in textArray)
+                                    {
+                                        <td style="background-color:@bgColor;text-align:center;@cellstyle">@Html.Raw(textElement)</td>
+                                    }
+                                }
+                            }
+                        </tr>
+                    }
+                }
+            }
+        </table>
+    }
+    </div>
+}

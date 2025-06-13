@@ -1,0 +1,52 @@
+﻿@using System.Xml.Schema
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Xml
+@using Demo.Fagsystem.Models.Utils
+@using Demo.Fagsystem.Models.ViewModels
+@model PropertyRendererModel
+@{
+    var caption = Model.GetCaption(true);
+    var elements = TeksterUtils.GetEnrichedChildren(Model.Melding.SelectedSchema, Model.Prop);
+    var description = Model.GetDescription();
+    bool synligGruppe = !string.IsNullOrEmpty(caption);
+    string cssClass = (synligGruppe) ? "synlig_gruppe" : "anonym_gruppe";
+    var prefilled = Model.Melding.GetPrefilledValueFor(Model.GetId());
+    string collapsedGroupClass = (prefilled?.InitiallyClosed == true) ? "collapsedGroup" : "";
+    string closedGroupClass = (prefilled?.InitiallyClosed == true) ? "hidden" : "";
+    string onClickHandler = (prefilled?.InitiallyClosed == true) ? $"toggleCollapseContainer('{Model.GetId()}');" : "";
+    <div class="@cssClass @collapsedGroupClass" id="@Model.GetId()">
+        @if (synligGruppe)
+        {
+            <div id="toggleControl_@Model.GetId()" onclick="@onClickHandler">
+            @if (prefilled?.InitiallyClosed == true)
+            {
+                string imgName = "../img/arrow-right.png";
+                <img class="collapse-image" src="@imgName" alt="collapse image">
+            }
+            <span class="gruppetekst">@caption</span>
+            @if (Model.UseDescription)
+            {
+                    @await Html.PartialAsync($"/Pages/Partial/XmlElement/Beskrivelse.cshtml", description)
+            }
+            </div>
+        }
+        <div class="collapseContainer @closedGroupClass ">
+        @foreach (var enrichedElement in elements)
+        {
+            var element = enrichedElement.Element;
+            bool skipRender = Model.SkipProp != null && element is XmlSchemaElement el && el.ElementSchemaType == Model.SkipProp;
+            if (!skipRender)
+            {
+                <div class="variabel">
+                @{
+                    var elementModel = new PropertyRendererModel(Model, Model.Melding, $"{Model.GetId()}", element);
+                    string controlName = RenderUtils.GetControlNameForProperty(element);
+                }
+                <a name="@elementModel.GetId()"></a>
+                        @await Html.PartialAsync($"/Pages/Partial/XmlElement/{controlName}.cshtml", elementModel)
+                </div>
+            }
+        }
+        </div>
+    </div>
+}

@@ -1,0 +1,9 @@
+﻿@using System.Web
+@model string
+@{
+    @if (!string.IsNullOrEmpty(Model))
+    {
+        string value = (Model.Contains("<")) ? Model : HtmlEncoder.Encode(Model);
+        <div class="gruppe_beskrivelse">@Html.Raw(value)</div>
+    }
+}

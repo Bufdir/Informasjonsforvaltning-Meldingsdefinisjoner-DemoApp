@@ -1,0 +1,11 @@
+﻿@using Buf.Meldingsutveksler.SkjemaVerktoy.Xml
+@using Demo.Fagsystem.Models.ViewModels
+@model PropertyRendererModel
+@{
+    var prefilled = Model.Melding.GetPrefilledValueFor(Model.GetId());
+    var fixedValue = XsdUtils.GetFixedValue(Model.Prop);
+    bool check = (prefilled?.Value == XmlUtils.XmlTrue) || (fixedValue == XmlUtils.XmlTrue);
+    string checkedStr = (check) ? "checked" : "";
+    <input type="hidden" id="@Model.GetId()" name="@Model.GetId()" value="@checkedStr" />
+    @await Html.PartialAsync($"/Pages/Partial/XmlElement/Beskrivelse.cshtml", @Model.GetDescription())
+}

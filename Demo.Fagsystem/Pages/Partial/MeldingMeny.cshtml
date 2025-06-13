@@ -1,0 +1,15 @@
+﻿@using Demo.Fagsystem.Pages.Partial
+@model MeldingMenyModel
+@{
+    <div class="dropdown">
+        <button class="dropbtn">...</button>
+        <div class="dropdown-content">
+            @foreach (var kvp in Model.Actions)
+            {
+                <div onclick="@kvp.Value">@kvp.Key</div>
+            }
+        </div>
+    </div>
+
+
+}
