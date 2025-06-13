@@ -28,7 +28,8 @@ namespace Demo.Fagsystem.Models.Utils
                 ?? throw new Exception($"Ingen rotelement i {schema.TargetNamespace}");
 
             nmsps = [];
-            XmlSchemaSet schemaSet = XsdUtils.GetSchemaSet(schema, out schemaLoc);
+            XmlSchemaSet schemaSet = XsdUtils.GetSchemaSet(schema, out schemaLoc)
+                ?? throw new Exception($"Kunne ikke generere XmlSchemaSet for {schema.TargetNamespace}");
 
             doc.Schemas.Add(schemaSet);
 

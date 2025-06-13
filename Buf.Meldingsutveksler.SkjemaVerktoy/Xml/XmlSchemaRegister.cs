@@ -11,19 +11,33 @@ using System.Xml.Serialization;
 namespace Buf.Meldingsutveksler.SkjemaVerktoy.Xml;
 public static class XmlSchemaRegister
 {
-    public const string FILENAME_REGISTER = "bufdir.xsd.oversikt.xml";
+    public const string FILENAME_REGISTER = "bufdir.xsd.oversikt.json";
+    public const string FILENAME_REGISTER_XML = "bufdir.xsd.oversikt.xml";
     public static XmlSchemaRecCollection Schemas { get; set; } = new();
+
+    public static bool LoadXml(IFileSystem fileSystem)
+    {
+        var serializer = new XmlSerializer(typeof(XmlSchemaRecCollection));
+        if (!fileSystem.FileExists(FILENAME_REGISTER_XML))
+            return false;
+        using var reader = fileSystem.GetStream(FILENAME_REGISTER_XML);
+
+        Schemas = serializer.Deserialize(reader) as XmlSchemaRecCollection
+            ?? throw new Exception($"Kunne ikke lese skjemaregister ({FILENAME_REGISTER_XML})");
+        ConvertToJson(fileSystem);
+        return true;
+    }
 
     public static bool Load(IFileSystem fileSystem)
     {
-        var serializer = new XmlSerializer(typeof(XmlSchemaRecCollection));
+        //var serializer = new XmlSerializer(typeof(XmlSchemaRecCollection));
         if (!fileSystem.FileExists(FILENAME_REGISTER))
             return false;
         using var reader = fileSystem.GetStream(FILENAME_REGISTER);
 
-        Schemas = serializer.Deserialize(reader) as XmlSchemaRecCollection
+        Schemas = JsonSerializer.Deserialize<XmlSchemaRecCollection>(reader)
             ?? throw new Exception($"Kunne ikke lese skjemaregister ({FILENAME_REGISTER})");
-        //ConvertToJson(fileSystem);
+        //        ConvertToJson(fileSystem);
         return true;
     }
 
@@ -36,6 +50,7 @@ public static class XmlSchemaRegister
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
         var registerJSON = JsonSerializer.Serialize(Schemas, options);
+        registerJSON = registerJSON.Replace(".xml", ".json");
         string filnavn = FILENAME_REGISTER.Replace(".xml", ".json");
         fileSystem.Save(filnavn, registerJSON, true);
     }
@@ -67,7 +82,7 @@ public static class XmlSchemaRegister
 
     public static bool IsEmptyDefs()
     {
-        return Schemas == null || XmlSchemaRegister.Schemas.xsds?.Count() == 0;
+        return Schemas == null || XmlSchemaRegister.Schemas.xsds?.Length == 0;
     }
 
     public static bool IsKnownSchema(string nmsp)

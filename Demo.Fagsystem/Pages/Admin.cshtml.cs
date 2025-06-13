@@ -85,7 +85,7 @@ namespace Demo.Fagsystem.Pages
             Result = "Lagrede filer: <br />" + string.Join("<br />", savedFiles);
         }
 
-        private bool GetLocation(IFormFile file, out string directory)
+        private static bool GetLocation(IFormFile file, out string directory)
         {
             directory = "";
             if (Path.GetExtension(file.FileName) == ".xsd")

@@ -1,0 +1,34 @@
+﻿@page
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster.Models
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Xml
+@using Demo.Fagsystem.Pages
+@using System.Xml.Schema
+@model TestTeksterModel
+@{
+    <h2>Test av JSON-tekster:</h2>
+    <div>
+        <h3>Elementer som ikke er i bruk:</h3>
+        @{
+            var ikkeBrukte = Model.Feil["ikkeBrukte"];
+            if (ikkeBrukte != null)
+            {
+                foreach (var skjemaelement in ikkeBrukte.Cast<Skjemaelement>())
+                {
+                    <div>[@skjemaelement.id] @skjemaelement.navn</div>
+                }
+            }
+        }
+
+        <h3>Manglende elementer:</h3>
+        @{
+            var mangler = Model.Feil["mangler"];
+            if (mangler != null)
+            {
+                foreach (var xsdElement in mangler.Cast<XmlSchemaAnnotated>())
+                {
+                    <div>[@xsdElement.Id] @XsdUtils.GetName(xsdElement)</div>
+                }
+            }
+        }
+    </div>
+}

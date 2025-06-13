@@ -15,6 +15,7 @@ public class XmlSchemaRec
     [XmlAttribute("nmsp")]
     public string nmsp { get; set; } = "";
 
+    [JsonIgnore]
     [XmlAttribute]
     public string navn { get; set; } = "";
 
@@ -27,19 +28,15 @@ public class XmlSchemaRec
     [XmlAttribute("status")]
     public string status { get; set; } = "";
 
-    [JsonIgnore]
     [XmlAttribute("gyldigFra")]
     public string _gyldigFra { get; set; } = "";
 
-    [JsonIgnore]
     [XmlAttribute("gyldigTil")]
     public string _gyldigTil { get; set; } = "";
 
-    [JsonIgnore]
     [XmlAttribute("kodelister")]
-    public string? _kodelister { get; set; }
+    public string _kodelister { get; set; } = "";
 
-    [JsonIgnore]
     [XmlAttribute("tekster")]
     public string _tekster { get; set; } = "";
 

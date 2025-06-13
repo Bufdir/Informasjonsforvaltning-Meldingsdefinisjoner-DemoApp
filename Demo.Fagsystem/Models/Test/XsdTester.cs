@@ -1,27 +1,78 @@
 ﻿using Buf.Meldingsutveksler.SkjemaVerktoy.EnumKodeliste;
+using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster;
+using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster.Models;
 using Buf.Meldingsutveksler.SkjemaVerktoy.Xml;
+using System.Collections;
 using System.Xml.Schema;
 
 namespace Demo.Fagsystem.Models.Test;
 
 public static class XsdTester
 {
-    public static List<string> TestJsonTekster()
+    public static Dictionary<string, ICollection> TestJsonTekster()
     {
-        /*      
-                XsdUtils.Tekster.missing.Clear();
-                XsdUtils.Tekster.used.Clear();
-                XsdUtils.Tekster.wrongName.Clear();
-        */
-        List<string> result = [];
-        /*        foreach (var item in TeksterUtils.TekstFiler.skjema?.skjemaelement ?? [])
+        Dictionary<string, ICollection> result = [];
+        List<Skjemaelement> ikkeBrukteSkjemaElement = [];
+        foreach (var tekstfil in TeksterUtils.TekstFiler)
+        {
+            if (tekstfil.skjema != null)
+            {
+                foreach (var skjemaelement in tekstfil.skjema.skjemaelement)
                 {
-                    string itemValue = $"{item.id} - {item.navn}";
-                    if (TeksterUtils.TekstFiler.used.IndexOf(itemValue) < 0)
-                        result.Add(itemValue);
+                    ikkeBrukteSkjemaElement.Add(skjemaelement);
                 }
-        */
+            }
+        }
+        List<XmlSchemaAnnotated> elementSomManglerSkjemaElement = [];
+        foreach (var schemaRec in XmlSchemaRegister.Schemas.xsds)
+        {
+            var rootElement = XsdUtils.GetRootElement(schemaRec.Schema);
+            if (rootElement != null && schemaRec.Schema != null)
+            {
+                if (XsdUtils.GetName(rootElement) == "Henvisning")
+                {
+                    string path = "";// XsdUtils.GetName(rootElement);
+                    TestXsd(schemaRec.Schema, path, rootElement, ikkeBrukteSkjemaElement, elementSomManglerSkjemaElement);
+                }
+            }
+        }
+        result["ikkeBrukte"] = ikkeBrukteSkjemaElement;
+        result["mangler"] = elementSomManglerSkjemaElement;
         return result;
+    }
+
+    private static void TestXsd(XmlSchema schema, string path, XmlSchemaAnnotated element, List<Skjemaelement> elementer, List<XmlSchemaAnnotated> manglerTekst)
+    {
+        bool isChoiceElement = XsdUtils.IsChoiceElement(element);
+        var name = XsdUtils.GetName(element);
+        var xPath = $"{path}/{XsdUtils.GetName(element)}".TrimEnd('/');
+        XmlSchemaComplexType? complexType = XsdUtils.GetComplexType(element);
+        XmlSchemaSimpleType? simpleType = XsdUtils.GetSimpleType(element);
+        var skjemaEl = TeksterUtils.GetTekstElement(schema, element);
+        if (skjemaEl != null)
+        {
+            elementer.Remove(skjemaEl);
+        }
+        else
+        {
+            if (!manglerTekst.Any(e => e.Id == element.Id))
+                manglerTekst.Add(element);
+        }
+        if (isChoiceElement)
+        {
+            var choices = XsdUtils.GetChoiceElements(element)
+                ?? throw new Exception($"Finner ikke choice-element til definisjon {XsdUtils.GetName(element)}");
+            foreach (var choiceElement in choices.Cast<XmlSchemaAnnotated>())
+            {
+                TestXsd(schema, xPath, choiceElement, elementer, manglerTekst);
+            }
+        }
+        var children = XsdUtils.GetXsdChildElements(element);
+        foreach (var child in children)
+        {
+            TestXsd(schema, xPath, child, elementer, manglerTekst);
+        }
+        //SortLists();
     }
 
     public static List<string> TestKodelister()

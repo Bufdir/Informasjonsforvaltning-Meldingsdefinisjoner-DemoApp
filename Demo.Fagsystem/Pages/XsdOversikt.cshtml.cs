@@ -6,9 +6,9 @@ using System.Xml.Schema;
 
 namespace Demo.Fagsystem.Pages
 {
-    public class TestSchemaModel : PageModel
+    public class XsdOversiktModel : PageModel
     {
-        public TestSchemaModel()
+        public XsdOversiktModel()
         {
         }
 

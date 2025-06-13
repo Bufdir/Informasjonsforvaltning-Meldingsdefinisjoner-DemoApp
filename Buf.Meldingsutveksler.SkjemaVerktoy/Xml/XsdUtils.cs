@@ -361,7 +361,7 @@ namespace Buf.Meldingsutveksler.SkjemaVerktoy.Xml
                 return false;
             bool anyChoiceChildren = false;
             bool allChildrenChoice = true;
-            if (elementType.Particle is XmlSchemaChoice choice)
+            if (elementType.Particle is XmlSchemaChoice)
                 anyChoiceChildren = true;
             else
                 allChildrenChoice = false;
@@ -398,7 +398,7 @@ namespace Buf.Meldingsutveksler.SkjemaVerktoy.Xml
         {
             string dataType = "";
             var simpleType = XsdUtils.GetSimpleType(element);
-            var complexType = XsdUtils.GetComplexType(element);
+            //            var complexType = XsdUtils.GetComplexType(element);
             var minOccurs = GetMinOccurs(element);
             string maxOccurs = GetMaxOccurs(element).ToString();
             if (maxOccurs == "1000")
@@ -810,9 +810,12 @@ namespace Buf.Meldingsutveksler.SkjemaVerktoy.Xml
             return null;
         }
 
-        public static XmlSchemaSet? GetSchemaSet(XmlSchema schema, out string schemaLoc)
+        public static XmlSchemaSet? GetSchemaSet(XmlSchema? schema, out string schemaLoc)
         {
-            schemaLoc = schema.TargetNamespace;
+            schemaLoc = "";
+            if (schema == null)
+                return null;
+            schemaLoc = schema.TargetNamespace ?? "???";
             return XmlSchemaRegister.GetSchemaSet(schema.TargetNamespace);
         }
     }

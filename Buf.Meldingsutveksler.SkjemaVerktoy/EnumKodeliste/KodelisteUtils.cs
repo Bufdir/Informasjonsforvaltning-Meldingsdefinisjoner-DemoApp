@@ -5,7 +5,6 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml.Schema;
-using System.Xml.Serialization;
 
 namespace Buf.Meldingsutveksler.SkjemaVerktoy.EnumKodeliste;
 
@@ -18,10 +17,9 @@ public static class KodelisteUtils
         kodelister.Clear();
     }
 
-    public static void Init(IFileSystem fileSystem)
+    /*public static void InitXml(IFileSystem fileSystem)
     {
         var serializer = new XmlSerializer(typeof(Kodelister));
-        // var files = new DirectoryInfo(XsdPath).GetFiles(@"*odeliste*.xml", SearchOption.TopDirectoryOnly/*AllDirectories*/);
         var fileNames = fileSystem.ListFiles(KODELISTER_DIRECTORY).Where(f => f.EndsWith(".xml"));
         foreach (var fileName in fileNames)
         {
@@ -32,6 +30,24 @@ public static class KodelisteUtils
             kodelister.Add(innhold);
         }
         //ConvertToJson(fileSystem);
+        //InitKodelister();
+    }
+*/
+    public static void Init(IFileSystem fileSystem)
+    {
+        var fileNames = fileSystem.ListFiles(KODELISTER_DIRECTORY).Where(f => f.EndsWith(".json"));
+        foreach (var fileName in fileNames)
+        {
+            if (!fileName.Contains(".schema."))
+            {
+                using var reader = fileSystem.GetStream(fileName);
+                var innhold = JsonSerializer.Deserialize<Kodelister>(reader)
+                    ?? throw new Exception($"Kunne ikke lese innhold i kodelistefil {fileName}");
+                innhold.Filnavn = fileName;
+                kodelister.Add(innhold);
+            }
+        }
+        //        ConvertToJson(fileSystem);
         //InitKodelister();
     }
 
