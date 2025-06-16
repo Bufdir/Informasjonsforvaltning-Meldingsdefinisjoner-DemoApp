@@ -1,17 +1,19 @@
 # Fagsystem demo 
-Demoapp som brukes for å teste melding/skjema
+Demoapp som brukes for Ã¥ teste melding/skjema
 ## Oppbygging
-Class library SkjemaVerktoy inneholder funksjonalitet for å benytte våre definisjoner.
-Dette kodebiblioteket vil videreutvikles og publiseres oppdateringer for, med tanke på bruk for leverandører.
+Class library SkjemaVerktoy inneholder funksjonalitet for Ã¥ benytte vÃ¥re definisjoner.
+Dette kodebiblioteket vil videreutvikles og publiseres oppdateringer for, med tanke pÃ¥ bruk for leverandÃ¸rer.
+
+NB! MÃ¥ bruke lokal Storage Account emulator hvis man ikke har tilgang til storage account i Azure eller bare vil kjÃ¸re lokalt.
 
 ## Funksjonalitet
-- Bygger skjema UI basert på melding XSD
+- Bygger skjema UI basert pÃ¥ melding XSD
 - Validering via SkjemaVerktoy Class library.
 - Kodelistetekster via SkjemaVerktoy
 - Meldingslager i Blob container
 - Mockup folkeregister
 - Kan laste opp definisjonsfiler
 
-## Feil, spørsmål, innvendinger og forslag
+## Feil, spÃ¸rsmÃ¥l, innvendinger og forslag
 
-Hvis det er spørsmål, innvendinger og forslag til det som er gjort så langt, kontakt gjerne bjorge.saether@bufdir.no.
+Hvis det er spÃ¸rsmÃ¥l, innvendinger og forslag til det som er gjort sÃ¥ langt, kontakt gjerne bjorge.saether@bufdir.no.
