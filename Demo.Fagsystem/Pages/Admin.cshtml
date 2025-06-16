@@ -18,11 +18,13 @@
     <hr />
     <div>
         <h2>Oppdater definisjoner</h2>
+        <p>Last definisjoner på nytt (nødvendig om man har lastet opp nye definisjoner uten å restarte prosess)</p>
         <button name="renewDefs">Bruk oppdaterte definisjoner</button>
     </div>
     <hr />
     <div>
         <h2>Last opp definisjonsfiler:</h2>
+        <p>Enkeltfiler i .xsd eller .json - format, evt hele .zip-pakken med definisjoner</p>
         <input type="file" id="postedFiles" name="postedFiles" value="Velg definisjonsfil (.zip eller enkeltfiler)" multiple>
 
         <button name="filesUpload" id="filesUpload" type="submit" asp-page-handler="UploadFiles">Last opp</button>

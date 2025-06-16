@@ -65,7 +65,8 @@ public class BlobStorageFileSystem(BlobContainerConfig config) : IFileSystem
     {
         var client = GetBlobStorageClient();
         var blobClient = client.GetBlobClient(FileName);
-        ContentStream.Position = 0;
+        if (ContentStream.CanSeek)
+            ContentStream.Position = 0;
         var _ = blobClient.Upload(ContentStream, overwrite: doOverwrite);
     }
 

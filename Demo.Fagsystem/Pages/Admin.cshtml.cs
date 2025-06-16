@@ -6,6 +6,7 @@ using Buf.Meldingsutveksler.SkjemaVerktoy.Xml;
 using Demo.Fagsystem.Models.FagsystemSimulator.Fagsystem;
 using Demo.Fagsystem.Models.Utils;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.IO.Compression;
 
 namespace Demo.Fagsystem.Pages
 {
@@ -58,10 +59,13 @@ namespace Demo.Fagsystem.Pages
 
         public void /*async Task<IActionResult>*/ OnPostUploadFiles(List<IFormFile> postedFiles)
         {
+            string[] allowedExtensions = [".json", ".xsd"];
             List<string> savedFiles = [];
+            List<string> nonSavedFiles = [];
             IFileSystem? fileSystem = SkjemaVedrktoyInitializer.FileSystem
                 ?? throw new Exception("Har ikke tilgjengelig filsystem i filopplasting");
             var files = postedFiles;
+
             var recFile = files.FirstOrDefault(f => f.FileName.Contains(XmlSchemaRegister.FILENAME_REGISTER));
             if (recFile != null)
             {
@@ -73,16 +77,42 @@ namespace Demo.Fagsystem.Pages
             {
                 if (file != recFile)
                 {
-                    if (GetLocation(file, out string directory))
+                    if (Path.GetExtension(file.FileName).ToLower() == ".zip")
                     {
-                        var stream = FormFileToStream(file);
-                        string fileName = directory + "/" + file.FileName;
-                        fileSystem.Save(fileName, stream, true);
-                        savedFiles.Add(fileName);
+                        int count = 0;
+                        savedFiles.Add("Zip-arkiv med innhold: " + file.FileName);
+                        using var stream = FormFileToStream(file);
+                        ZipArchive zip = new ZipArchive(stream);
+                        foreach (var entry in zip.Entries)
+                        {
+                            string fileName = entry.ToString().ToLower();
+                            if (allowedExtensions.Contains(Path.GetExtension(fileName).ToLower()))
+                            {
+                                var zipStream = entry.Open();
+                                fileSystem.Save(fileName, zipStream, true);
+                                savedFiles.Add(fileName);
+                                count++;
+                            }
+                        }
+                        savedFiles.Add($"Totalt: {count} filer");
+                    }
+                    else
+                    {
+                        if (GetLocation(file, out string directory))
+                        {
+                            using var stream = FormFileToStream(file);
+                            string fileName = directory + "/" + file.FileName;
+                            fileSystem.Save(fileName, stream, true);
+                            savedFiles.Add(fileName);
+                        }
+                        else
+                            nonSavedFiles.Add(file.FileName);
                     }
                 }
             }
-            Result = "Lagrede filer: <br />" + string.Join("<br />", savedFiles);
+            Result = "<b>Lagrede filer:</b><br />" + string.Join("<br />", savedFiles) + "<hr />";
+            if (nonSavedFiles.Count > 0)
+                Result += "<b>Utelatte filer:</b><br />" + string.Join("<br />", nonSavedFiles) + "<br />";
         }
 
         private static bool GetLocation(IFormFile file, out string directory)
