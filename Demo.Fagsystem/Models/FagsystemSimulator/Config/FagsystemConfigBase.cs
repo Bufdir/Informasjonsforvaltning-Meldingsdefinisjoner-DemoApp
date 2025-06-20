@@ -4,6 +4,8 @@ public class FagsystemConfigBase
 {
     public string? Id { get; set; }
     public string? Aktiv { get; set; }
+
+    public string? SkjulAdmin { get; set; }
     public string? Standalone { get; set; }
 
     public BlobContainerConfig? Meldinger { get; set; }

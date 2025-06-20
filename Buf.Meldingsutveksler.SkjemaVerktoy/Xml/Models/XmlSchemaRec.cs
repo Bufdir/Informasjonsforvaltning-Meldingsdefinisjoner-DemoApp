@@ -3,43 +3,34 @@ using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster.Models;
 using System.Globalization;
 using System.Text.Json.Serialization;
 using System.Xml.Schema;
-using System.Xml.Serialization;
 
 
 namespace Buf.Meldingsutveksler.SkjemaVerktoy.Xml.Models;
 
 [Serializable]
-[XmlType(AnonymousType = true)]
 public class XmlSchemaRec
 {
-    [XmlAttribute("nmsp")]
     public string nmsp { get; set; } = "";
 
-    [JsonIgnore]
-    [XmlAttribute]
-    public string navn { get; set; } = "";
-
-    [XmlAttribute("beskrivelse")]
     public string beskrivelse { get; set; } = "";
 
-    [XmlAttribute("rotelement")]
     public string rotelement { get; set; } = "";
 
-    [XmlAttribute("status")]
     public string status { get; set; } = "";
 
-    [XmlAttribute("gyldigFra")]
+    [JsonPropertyName("gyldigFra")]
     public string _gyldigFra { get; set; } = "";
 
-    [XmlAttribute("gyldigTil")]
+    [JsonPropertyName("gyldigTil")]
     public string _gyldigTil { get; set; } = "";
 
-    [XmlAttribute("kodelister")]
+    [JsonPropertyName("kodelister")]
     public string _kodelister { get; set; } = "";
 
-    [XmlAttribute("tekster")]
+    [JsonPropertyName("tekster")]
     public string _tekster { get; set; } = "";
 
+    [JsonIgnore]
     public DateTime? gyldigFra
     {
         get
@@ -50,6 +41,7 @@ public class XmlSchemaRec
         }
     }
 
+    [JsonIgnore]
     public DateTime? gyldigTil
     {
         get
@@ -69,6 +61,7 @@ public class XmlSchemaRec
     [JsonIgnore]
     public Kodelister? Kodelister { get; set; }
 
+    [JsonIgnore]
     public string XsdFilnavn { get; set; } = "";
 
 }

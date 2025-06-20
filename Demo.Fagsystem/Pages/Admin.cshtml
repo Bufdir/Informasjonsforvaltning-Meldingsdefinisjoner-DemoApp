@@ -1,5 +1,8 @@
 ﻿@page
+@using Demo.Fagsystem
+@using Demo.Fagsystem.Models.Utils
 @using Demo.Fagsystem.Pages
+@using Demo.Fagsystem.Pages.Partial
 @model AdminModel
 @{
     <h1>Admin-side</h1>
@@ -30,7 +33,8 @@
         <button name="filesUpload" id="filesUpload" type="submit" asp-page-handler="UploadFiles">Last opp</button>
     </div>
     <hr />
-    <p>@Html.Raw(Model.Result)</p>
+        <p>@Html.Raw(Model.Result)</p>
+    }
 }
 
 

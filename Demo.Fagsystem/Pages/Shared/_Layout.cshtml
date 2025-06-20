@@ -23,6 +23,7 @@
                 string jsSelectedFagsystemFunc = (isSelectedFagsystem) ? "postForm" : "dummyPost";
                 var scenarioModel = new ScenarioSelectorModel(this.Context.Request);
                 bool doClear = WebUtils.GetRequestValue(this.Context.Request, Konstanter.ActionParam) == "clear";
+                bool hideAdmin = scenarioModel.selectedInstans?.Config.SkjulAdmin == "1";
             }
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
                 <div class="container">
@@ -30,14 +31,16 @@
                     @await Html.PartialAsync("/Pages/Partial/ScenarioSelector.cshtml", scenarioModel)
                     <a class="nav-link text-dark" asp-area="" asp-page="/XSDs">  XSD / tillegg</a>
                     <a class="nav-link text-dark" asp-area="" asp-page="/Index" target="_blank">  Nytt vindu</a>
-                    <button class="nav-link text-dark" asp-area="" onclick="@jsSelectedFagsystemFunc ('/Admin')">  Admin</button>
+                    @if (!hideAdmin)
+                    {
+                        <button class="nav-link text-dark" asp-area="" onclick="@jsSelectedFagsystemFunc ('/Admin')">  Admin</button>
+                    }
                 </div>
             </nav>
             @if (scenarioModel.selectedInstans != null)
             {
-                string fagsystemMenu = scenarioModel.selectedInstans.PageFolder; 
+                string fagsystemMenu = scenarioModel.selectedInstans.PageFolder;
                 @await Html.PartialAsync($"/Pages/Simulator/{fagsystemMenu}/Partial/Menu.cshtml", new FagsystemToolbarModel(this.Context.Request, scenarioModel.selectedInstans))
-                ;
             }
     </header>
     <div class="container">
