@@ -47,6 +47,7 @@
                     if (choiceElement == null)
                         throw new Exception($"'choiceElement' == null'");
                     string id = $"{Model.GetId()}_CHOICE_{choiceElement.Name}";
+                    string idUnderlying = $"{Model.GetId()}{choiceElement.Name}";
                     bool isChecked = (selectedValue != "") ? choiceElement.Name == selectedValue : first;
                     if (isChecked)
                     {
@@ -57,7 +58,7 @@
                     string checkedAttr = (isChecked) ? "checked" : "";
                     first = false;
 
-                    <input type="radio" class="dropdown" title="@Model.GetId()" name="@Model.GetNameChoice()_CHOICE" id="@id" value="@choiceElement.Name" onchange="chooseChoiceElement('@id','choice_container')" @checkedAttr @disableStr />
+                    <input type="radio" class="dropdown" title="@Model.GetId()" name="@Model.GetNameChoice()_CHOICE" id="@id" value="@choiceElement.Name" onchange="choiceHandler('@id','choice_container', '@idUnderlying')" @checkedAttr @disableStr />
                     <label class="checkbox_tekst @disableCssClass" title="@Model.GetId()" for="@id">@TeksterUtils.GetCaption(Model.Melding.SelectedSchema, choiceElement, true)@Html.Raw(WebUtils.getMandatoryMarker(Model, !isChecked))</label>
                 index++;
             }
@@ -70,11 +71,12 @@
                     index = 0;
                     foreach (var choiceElement in choiceElements)
                     {
-                        var elementModel = new PropertyRendererModel(Model, Model.Melding, $"{Model.GetId()}", choiceElement) {UseCaption = false};
+                        var elementModel = new PropertyRendererModel(Model, Model.Melding, $"{Model.GetId()}", choiceElement) { UseCaption = false };
                         string controlName = RenderUtils.GetControlNameForProperty(choiceElement, true);
                         string displayClass = (index == selectedIndex) ? "" : "hidden";
                         index++;
-                        <div class="choice_container @displayClass">
+                        string id = $"{Model.GetId()}_CHOICE_{choiceElement.Name}_CONTAINER";
+                        <div class="choice_container @displayClass" id="@id">
                             @await Html.PartialAsync($"/Pages/Partial/XmlElement/{controlName}.cshtml", elementModel)
                         </div>
                     }

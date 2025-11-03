@@ -106,7 +106,7 @@ public static class TeksterUtils
     public static Skjemaelement? GetTekstElement(XmlSchema schema, XmlSchemaAnnotated prop)
     {
         XmlSchemaRec registerRec = XmlSchemaRegister.Schemas.xsds.FirstOrDefault(r => r.nmsp == schema.TargetNamespace)
-            ?? throw new Exception($"Finner ikke sXsd med TargetNamespace = {schema.TargetNamespace}");
+            ?? throw new Exception($"Finner ikke Xsd med TargetNamespace = {schema.TargetNamespace}");
         return GetTekstElement(registerRec, prop);
     }
 
@@ -141,7 +141,7 @@ public static class TeksterUtils
     public static List<EnrichedElement> GetEnrichedChildren(XmlSchema? schema, XmlSchemaAnnotated prop)
     {
         XmlSchemaRec registerRec = XmlSchemaRegister.Schemas.xsds.FirstOrDefault(r => r.nmsp == schema?.TargetNamespace)
-            ?? throw new Exception($"Finner ikke sXsd med TargetNamespace = {schema?.TargetNamespace ?? "schema == null"}");
+            ?? throw new Exception($"Finner ikke Xsd med TargetNamespace = {schema?.TargetNamespace ?? "schema == null"}");
         List<EnrichedElement> result = [];
         var elements = XsdUtils.GetXsdChildren(prop);
         for (int i = 0; i < elements.Count; i++)

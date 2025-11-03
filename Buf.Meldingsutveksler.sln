@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Buf.Meldingsutveksler.Klient", "Buf.Meldingsutveksler.Klient\Buf.Meldingsutveksler.Klient.csproj", "{4C80985C-8A80-4EE9-8D0C-AE4759D176C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Buf.Meldingsutveksler.Service", "Buf.Meldingsutveksler.Service\Buf.Meldingsutveksler.Service.csproj", "{4FA4192A-92C8-4080-B78A-E2BCF4F084FE}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Fagsystem", "Demo.Fagsystem\Demo.Fagsystem.csproj", "{DAE9B4A3-E1A9-4D44-B65F-5A728E5755EB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1D453650-3DBD-4CEC-844E-B79CA943DAF0}"
@@ -25,6 +27,10 @@ Global
 		{4C80985C-8A80-4EE9-8D0C-AE4759D176C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C80985C-8A80-4EE9-8D0C-AE4759D176C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C80985C-8A80-4EE9-8D0C-AE4759D176C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FA4192A-92C8-4080-B78A-E2BCF4F084FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA4192A-92C8-4080-B78A-E2BCF4F084FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA4192A-92C8-4080-B78A-E2BCF4F084FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA4192A-92C8-4080-B78A-E2BCF4F084FE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DAE9B4A3-E1A9-4D44-B65F-5A728E5755EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DAE9B4A3-E1A9-4D44-B65F-5A728E5755EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAE9B4A3-E1A9-4D44-B65F-5A728E5755EB}.Release|Any CPU.ActiveCfg = Release|Any CPU

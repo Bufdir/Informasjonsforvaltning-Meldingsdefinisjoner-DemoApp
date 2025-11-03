@@ -8,7 +8,10 @@ namespace Buf.Meldingsutveksler.Meldinger.Models
     {
         [JsonInclude]
         public Meldingshode Meldingshode { get; set; } = meldingshode;
-
+        [JsonInclude]
+        public Kanal? Kanal { get; set; }
+        [JsonInclude]
+        public string? Protokoll { get; set; }
         [JsonInclude]
         public MeldingDirection Direction { get; set; } = direction;
         [JsonInclude]

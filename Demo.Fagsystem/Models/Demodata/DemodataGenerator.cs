@@ -453,13 +453,13 @@ namespace Demo.Fagsystem.Models.Demodata
                 AddKontaktperson(result, $"{rootElementName}.Meldingshode.KontaktInfoAvsender.KontaktpersonLeder", kontaktinfo.KontaktpersonLeder);
             }
 
-            result.Add(new($"{rootElementName}.Klient.Identifikator.Fodselsnummer", barn?.FREG_Person?.Fodselsnummer ?? "", false));
+            result.Add(new($"{rootElementName}.Klient.Identifikator.Fodselsnummer", barn?.FREG_Person?.Fodselsnummer ?? "", true/*false*/));
             result.Add(new($"{rootElementName}.Klient.Identifikator.Fodseldato", barn?.FREG_Person?.Fodselsdato.ToString("yyyy-MM-dd") ?? "", false));
             result.Add(new($"{rootElementName}.Klient.Identifikator.Kjonn", barn?.FREG_Person?.Kjonn ?? "", false));
-            result.Add(new($"{rootElementName}.Klient.Identifikator.EMA_FALSE", false.ToString(), false));
-            result.Add(new($"{rootElementName}.Klient.Identifikator.TerminDato", "", false));
-            result.Add(new($"{rootElementName}.Klient.Identifikator.Ufodt_FALSE", false.ToString(), false));
-            result.Add(new($"{rootElementName}.Klient.Identifikator.DUFnummer", "", false));
+            result.Add(new($"{rootElementName}.Klient.Identifikator.EMA_FALSE", false.ToString(), true/*false*/));
+            result.Add(new($"{rootElementName}.Klient.Identifikator.TerminDato", "", true/*false*/));
+            result.Add(new($"{rootElementName}.Klient.Identifikator.Ufodt_FALSE", false.ToString(), true/*false*/));
+            result.Add(new($"{rootElementName}.Klient.Identifikator.DUFnummer", "", true/*false*/));
             result.Add(new($"{rootElementName}.Klient.KommunalSaksId", DateTime.Now.Year.ToString() + "-" + barn?.FREG_Person?.Fodselsnummer, false));
             result.Add(new($"{rootElementName}.TiltakHistorikk", @"01.02.2022 - 12.09.2022 Fosterhjem
 12.09.2022 - 20.10.2023 Omsorgsinstitusjon", true));

@@ -1,0 +1,35 @@
+﻿@using System.Xml.Schema
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster
+@using Buf.Meldingsutveksler.SkjemaVerktoy.Xml
+@using Demo.Fagsystem.Models.Utils
+@using Demo.Fagsystem.Models.ViewModels
+@model PropertyRendererModel
+@{
+    var caption = Model.GetCaption(true);
+    var elements = TeksterUtils.GetEnrichedChildren(Model.Melding.SelectedSchema, Model.Prop);
+    var description = Model.GetDescription();
+    string cssClass = "sjekkliste_dokument";
+    var prefilled = Model.Melding.GetPrefilledValueFor(Model.GetId());
+    <div class="@cssClass" id="@Model.GetId()">
+            @if (Model.UseDescription)
+            {
+                    @await Html.PartialAsync($"/Pages/Partial/XmlElement/Beskrivelse.cshtml", description)
+            }
+        @foreach (var enrichedElement in elements)
+        {
+            var element = enrichedElement.Element;
+            bool skipRender = Model.SkipProp != null && element is XmlSchemaElement el && el.ElementSchemaType == Model.SkipProp;
+            if (!skipRender)
+            {
+                <div class="variabel">
+                @{
+                    var elementModel = new PropertyRendererModel(Model, Model.Melding, $"{Model.GetId()}", element);
+                    string controlName = RenderUtils.GetControlNameForProperty(element);
+                }
+                <a name="@elementModel.GetId()"></a>
+                        @await Html.PartialAsync($"/Pages/Partial/XmlElement/{controlName}.cshtml", elementModel)
+                </div>
+            }
+        }
+    </div>
+}

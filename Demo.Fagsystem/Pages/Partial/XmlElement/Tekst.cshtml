@@ -34,7 +34,7 @@
     }
     else
     {
-        <input title="@Model.GetId()" type="text" class="enlinjetekst @disableCssClass" name="@visibleIdAndName" id="@visibleIdAndName" value="@value" @disableStr />
+        <input title="@Model.GetId()" type="text" class="enlinjetekst @disableCssClass" name="@visibleIdAndName" id="@visibleIdAndName" onchange="checkDependentControlsActivation(this)" value="@value" @disableStr />
         @await Html.PartialAsync($"/Pages/Partial/XmlElement/Beskrivelse.cshtml", @Model.GetDescription())
     }
 }

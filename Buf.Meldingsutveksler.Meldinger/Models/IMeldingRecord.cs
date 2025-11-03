@@ -6,6 +6,8 @@ namespace Buf.Meldingsutveksler.Meldinger.Models;
 public interface IMeldingRecord
 {
     public Meldingshode Meldingshode { get; }
+    public Kanal? Kanal { get; set; }
+    public string? Protokoll { get; set; }
     public MeldingDirection Direction { get; set; }
     public MeldingTransferState State { get; set; }
     public int Response { get; set; }

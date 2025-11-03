@@ -75,6 +75,8 @@ namespace Demo.Fagsystem.Models.Utils
         internal static void SetCustomRenderers()
         {
             CustomRenderers["BUF_CC9A7CDF-B998-415D-995A-6275CBCCA465"] = "ElementSpecific/BarnetsSituasjon";
+            CustomRenderers["BUF_DA29CAA1-2096-48D0-B40B-E3AA97A84FCC"] = "ElementSpecific/Sjekkliste";
+            //            CustomRenderers["BUF_DA29CAA1-2096-48D0-B40B-E3AA97A84FCC"] = "ElementSpecific/SjekklisteDokument";
         }
 
     }

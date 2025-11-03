@@ -2,11 +2,8 @@
 using Buf.Meldingsutveksler.SkjemaVerktoy.FilSystem;
 using Buf.Meldingsutveksler.SkjemaVerktoy.Tekster;
 using Buf.Meldingsutveksler.SkjemaVerktoy.Xml.Models;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Xml.Schema;
-using System.Xml.Serialization;
 
 namespace Buf.Meldingsutveksler.SkjemaVerktoy.Xml;
 public static class XmlSchemaRegister
@@ -14,19 +11,6 @@ public static class XmlSchemaRegister
     public const string FILENAME_REGISTER = "bufdir.xsd.oversikt.json";
     public const string FILENAME_REGISTER_XML = "bufdir.xsd.oversikt.xml";
     public static XmlSchemaRecCollection Schemas { get; set; } = new();
-
-    public static bool LoadXml(IFileSystem fileSystem)
-    {
-        var serializer = new XmlSerializer(typeof(XmlSchemaRecCollection));
-        if (!fileSystem.FileExists(FILENAME_REGISTER_XML))
-            return false;
-        using var reader = fileSystem.GetStream(FILENAME_REGISTER_XML);
-
-        Schemas = serializer.Deserialize(reader) as XmlSchemaRecCollection
-            ?? throw new Exception($"Kunne ikke lese skjemaregister ({FILENAME_REGISTER_XML})");
-        ConvertToJson(fileSystem);
-        return true;
-    }
 
     public static bool Load(IFileSystem fileSystem)
     {
@@ -37,22 +21,7 @@ public static class XmlSchemaRegister
 
         Schemas = JsonSerializer.Deserialize<XmlSchemaRecCollection>(reader)
             ?? throw new Exception($"Kunne ikke lese skjemaregister ({FILENAME_REGISTER})");
-        //        ConvertToJson(fileSystem);
         return true;
-    }
-
-    public static void ConvertToJson(IFileSystem fileSystem)
-    {
-        var options = new JsonSerializerOptions()
-        {
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        };
-        var registerJSON = JsonSerializer.Serialize(Schemas, options);
-        registerJSON = registerJSON.Replace(".xml", ".json");
-        string filnavn = FILENAME_REGISTER.Replace(".xml", ".json");
-        fileSystem.Save(filnavn, registerJSON, true);
     }
 
     public static void Init()
@@ -60,9 +29,9 @@ public static class XmlSchemaRegister
         foreach (var item in Schemas.xsds)
         {
             if (item._kodelister != "")
-                item.Kodelister = KodelisteUtils.kodelister.FirstOrDefault(k => k.Filnavn == $"{KodelisteUtils.KODELISTER_DIRECTORY}/{item._kodelister}")
-                    ?? throw new Exception($"Kodelistefil '{item._kodelister}' ikke funnet");
-            if (item._tekster != "")
+                item.Kodelister = KodelisteUtils.kodelister.FirstOrDefault(k => k.Filnavn == $"{KodelisteUtils.KODELISTER_DIRECTORY}/{item._kodelister}");
+            //                    ?? throw new Exception($"Kodelistefil '{item._kodelister}' ikke funnet");
+            if (item.Schema != null && item._tekster != "")
             {
                 string[] tekstFiler = item._tekster.Split(";");
                 foreach (var fil in tekstFiler)
@@ -75,8 +44,11 @@ public static class XmlSchemaRegister
         }
         foreach (var item in Schemas.xsds)
         {
-            List<XmlSchema> stack = [];
-            XsdUtils.CreateSchemaSet(item, ref stack);
+            if (item.Schema != null)
+            {
+                List<XmlSchema> stack = [];
+                XsdUtils.CreateSchemaSet(item, ref stack);
+            }
         }
     }
 

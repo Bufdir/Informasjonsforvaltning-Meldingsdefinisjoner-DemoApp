@@ -1,0 +1,63 @@
+{
+  "protokollnavn": "bufdir.no.barnevern.ks.fiks.protokoll",
+  "versjon": "v1",
+  "meldingstyper": [
+    {
+      "id": "bufdir.no.barnevern.ks.fiks.protokoll.v1.henvisning",
+      "beskrivelse": "Henvisning fra 1.linje til 2.linje barnevern", 
+      "harPayload": true,
+      "payloadFilnavn": "payload.xml",
+      "kanSvareMed": ["bufdir.no.barnevern.ks.fiks.protokoll.v1.applikasjonskvittering", "bufdir.no.barnevern.ks.fiks.protokoll.v1.feilmelding", "bufdir.no.barnevern.ks.fiks.protokoll.v1.saksbehandlerkvittering"]
+    },
+    {
+      "id": "bufdir.no.barnevern.ks.fiks.protokoll.v1.vedleggsmelding",
+      "beskrivelse": "Melding som brukes til å ettersende vedlegg til melding", 
+      "harPayload": true,
+      "payloadFilnavn": "payload.xml",
+      "kanSvareMed": ["bufdir.no.barnevern.ks.fiks.protokoll.v1.applikasjonskvittering", "bufdir.no.barnevern.ks.fiks.protokoll.v1.feilmelding", "bufdir.no.barnevern.ks.fiks.protokoll.v1.saksbehandlerkvittering"]
+    },
+    {
+      "id": "bufdir.no.barnevern.ks.fiks.protokoll.v1.trukketmelding",
+      "beskrivelse": "Brukes for å trekke eller slette tidligere sendt melding", 
+      "harPayload": true,
+      "payloadFilnavn": "payload.xml",
+      "kanSvareMed": ["bufdir.no.barnevern.ks.fiks.protokoll.v1.applikasjonskvittering", "bufdir.no.barnevern.ks.fiks.protokoll.v1.feilmelding", "bufdir.no.barnevern.ks.fiks.protokoll.v1.saksbehandlerkvittering"]
+    },
+    {
+      "id": "bufdir.no.barnevern.ks.fiks.protokoll.v1.tilsagn",
+      "beskrivelse": "Tilsagn om tjeneste fra 2.linje barnevern", 
+      "harPayload": true,
+      "payloadFilnavn": "payload.xml",
+      "erSvarPaa": ["bufdir.no.barnevern.ks.fiks.protokoll.v1.henvisning"],
+      "kanSvareMed": ["bufdir.no.barnevern.ks.fiks.protokoll.v1.applikasjonskvittering", "bufdir.no.barnevern.ks.fiks.protokoll.v1.feilmelding", "bufdir.no.barnevern.ks.fiks.protokoll.v1.saksbehandlerkvittering"]
+    },
+    {
+      "id": "bufdir.no.barnevern.ks.fiks.protokoll.v1.applikasjonskvittering",
+      "beskrivelse": "Kvittering fra mottakers fagsystem som indikerer melding registrert i systemet", 
+      "harPayload": true,
+      "payloadFilnavn": "payload.xml",
+      "erSvarPaa": ["bufdir.no.barnevern.ks.fiks.protokoll.v1.henvisning", "bufdir.no.barnevern.ks.fiks.protokoll.v1.vedleggsmelding", "bufdir.no.barnevern.ks.fiks.protokoll.v1.trukketmelding", "bufdir.no.barnevern.ks.fiks.protokoll.v1.testmelding"]
+    },
+    {
+      "id": "bufdir.no.barnevern.ks.fiks.protokoll.v1.feilmelding",
+      "beskrivelse": "Feilmelding fra mottakers meldingsmottak eller fagsystem", 
+      "harPayload": true,
+      "payloadFilnavn": "payload.xml",
+      "erSvarPaa": ["bufdir.no.barnevern.ks.fiks.protokoll.v1.henvisning", "bufdir.no.barnevern.ks.fiks.protokoll.v1.vedleggsmelding", "bufdir.no.barnevern.ks.fiks.protokoll.v1.trukketmelding", "bufdir.no.barnevern.ks.fiks.protokoll.v1.testmelding"]
+    },
+    {
+      "id": "bufdir.no.barnevern.ks.fiks.protokoll.v1.saksbehandlerkvittering",
+      "beskrivelse": "Sendes manuelt fra saksbehandler, indikerer at melding er sett og vil normalt indikere informasjon om forventet saksgang", 
+      "harPayload": true,
+      "payloadFilnavn": "payload.xml",
+      "erSvarPaa": ["bufdir.no.barnevern.ks.fiks.protokoll.v1.henvisning", "bufdir.no.barnevern.ks.fiks.protokoll.v1.vedleggsmelding", "bufdir.no.barnevern.ks.fiks.protokoll.v1.trukketmelding"]
+    },
+    {
+      "id": "bufdir.no.barnevern.ks.fiks.protokoll.v1.testmelding",
+      "beskrivelse": "Behandles ikke i fagsystem, men besvares med applikasjonskvittering eller feilmelding. Meldingen gjennomgår validering etter mottak.", 
+      "harPayload": true,
+      "payloadFilnavn": "payload.xml",
+      "kanSvareMed": ["bufdir.no.barnevern.ks.fiks.protokoll.v1.applikasjonskvittering", "bufdir.no.barnevern.ks.fiks.protokoll.v1.feilmelding"]
+    }
+  ]
+}

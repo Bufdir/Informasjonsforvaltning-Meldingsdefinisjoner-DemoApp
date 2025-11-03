@@ -297,6 +297,14 @@ body {
     background-color: lightgrey;
 }
 
+.sjekkliste_dokument {
+    margin-top: 5px;
+}
+.sjekliste_dokumenttype {
+    display: inline-block;
+    min-width: 540px;
+}
+
 .melding_liste td, th {
     padding-left: 1em;
     padding-right: 1em;

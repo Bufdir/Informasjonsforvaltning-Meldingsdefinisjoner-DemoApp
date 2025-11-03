@@ -16,7 +16,7 @@ namespace Buf.Meldingsutveksler.Meldinger.Enums
         sent = 4,
         [Description("Mottatt appRec")]
         appRecReceived = 5,
-        [Description("Mottatt kvittering")]
+        [Description("Mottatt saksbehandlerkvittering")]
         userRecReceived = 6,
         [Description("Feil ved sending")]
         sendError = 7,
@@ -31,7 +31,7 @@ namespace Buf.Meldingsutveksler.Meldinger.Enums
         validatingIncoming = 21,
         [Description("Sendt appRec")]
         appRecSent = 22,
-        [Description("Sendt kvittering")]
+        [Description("Sendt saksbehandlerkvittering")]
         userRecSent = 23,
         [Description("Feil ved mottak")]
         receiveError = 24,

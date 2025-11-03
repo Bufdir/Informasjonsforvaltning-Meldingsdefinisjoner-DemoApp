@@ -116,7 +116,7 @@ function checkDependentControlsActivation(element) {
                 }
             }
             else {
-                enabled = foundValue.includes(element.value);
+                enabled = (!element.disabled) && foundValue.includes(element.value);
             }
             if (foundControl.inverted) {
                 enabled = !enabled;
@@ -155,24 +155,56 @@ function createNewFromTemplate(divId) {
     setDependentControlsDefault();
 }
 
+function isNextSibling(base, compare, distance) {
+    var indexBase = -1;
+    var indexCompare = -1;
+    for (ix = 0; ix < base.parentElement.children.length; ix++) {
+        if (base.parentElement.children[ix] == base)
+            indexBase = ix;
+        if (base.parentElement.children[ix] == compare)
+            indexCompare = ix;
+    }
+    return indexCompare - indexBase == distance;
+}
+
+function choiceHandler(id, selectElementClass, controlledId) {
+    chooseChoiceElement(id, selectElementClass);
+    /*Virker ikke, må sjekke enabling for de andre alternative radiogroup'ene !!!
+    controlledElement = document.getElementById(controlledId);
+    if (controlledElement) {
+        controlGroup = controlledElement.parentElement.children;
+        for (i = 0; i < controlGroup.length; i++) {
+            id = controlGroup[i].id;
+            if (controlledElement.id != id) {
+                checkDependentControlsActivationById(id);
+            }
+        }
+    }*/
+}
+
 function chooseChoiceElement(id, selectElementClass) {
     var choiceElement = document.getElementById(id);
+    var choiceElementContainer = document.getElementById(id + "_CONTAINER");
     var parentElement = choiceElement.parentElement;
     for (i = 0; i < parentElement.children.length; i++)
     {
         ch = parentElement.children[i];
         if (ch.classList.contains(selectElementClass)) {
-            ch.classList.toggle('hidden');
+            ch.classList.add('hidden');
         }
         if (ch.children.length > 0) {
             for (j = 0; j < ch.children.length; j++) {
                 grandCh = ch.children[j];
                 if (grandCh.classList.contains('obligatorisk_markor')) {
-                    grandCh.classList.toggle('disabled');
+                    if (isNextSibling(choiceElement, ch, 1) == true)
+                        grandCh.classList.remove('disabled');
+                    else
+                        grandCh.classList.add('disabled');
                 }
             }
         }
     }
+    choiceElementContainer.classList.remove('hidden');
 }
 
 function menuActionMeldingListe(e, url, actionParameters) {

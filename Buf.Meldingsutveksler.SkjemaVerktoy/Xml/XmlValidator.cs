@@ -1,4 +1,5 @@
-﻿using Buf.Meldingsutveksler.SkjemaVerktoy.Xml.Models;
+﻿using Buf.Meldingsutveksler.SkjemaVerktoy.Meldingsprotokoll;
+using Buf.Meldingsutveksler.SkjemaVerktoy.Xml.Models;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -35,6 +36,18 @@ public static class XmlValidator
             }
         }
         return true;
+    }
+
+    public static Dictionary<string, string> getMeldingshodeSAX(Stream xmlStream)
+    {
+        var result = new Dictionary<string, string>();
+        XmlReader rd = XmlReader.Create(xmlStream);
+        if (rd.ReadToFollowing(MeldingKonstanter.Meldingshode))
+        {
+            var obj = rd.ReadElementContentAsObject();
+        }
+        return result;
+
     }
 
     public static bool ValidateXmlBuiltIn(XmlDocument doc, string schemaNmsp, out string error)
